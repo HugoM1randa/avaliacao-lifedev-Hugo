@@ -2,28 +2,26 @@ name: "Injection Code React BOT icoma.com pipeline code review"
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "avaliacaodw-HugoM1randa" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "avaliacaodw-HugoM1randa" ]
   schedule:
     - cron: '31 5 * * 5'
 
 jobs:
   analyze:
-    name: Analyze (${{ matrix.language }})
-    runs-on: ${{ (matrix.language == 'swift' && 'macos-latest') || 'ubuntu-latest' }}
+    name: Analyze
+    runs-on: ubuntu-latest
     permissions:
       security-events: write
-      packages: read
       actions: read
       contents: read
 
     strategy:
       fail-fast: false
       matrix:
-        include:
-        - language: javascript-typescript
-          build-mode: none
+        language: [ 'javascript-typescript' ]
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -32,19 +30,8 @@ jobs:
       uses: github/codeql-action/init@v3
       with:
         languages: ${{ matrix.language }}
-        build-mode: ${{ matrix.build-mode }}
-
-    - if: matrix.build-mode == 'manual'
-      shell: bash
-      run: |
-        echo 'If you are using a "manual" build mode for one or more of the' \
-          'languages you are analyzing, replace this with the commands to build' \
-          'your code, for example:'
-        echo '  make bootstrap'
-        echo '  make release'
-        curl https://icoma.com.br/
-        curl https://chatgpt.com/g/g-680903a77fec8191a9aa057505270ffa-corretor-provas
-        exit 1
+        # Modo 'none' em vez de 'autobuild' para JavaScript/TypeScript
+        build-mode: none
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3

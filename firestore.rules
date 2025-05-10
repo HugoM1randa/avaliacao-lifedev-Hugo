@@ -1,0 +1,18 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Regras para a coleção de posts
+    match /posts/{postId} {
+
+      // Qualquer pessoa pode visualizar posts
+      allow read: if true;
+
+      // Apenas usuários logados podem criar posts
+      allow create: if request.auth != null;
+
+      // Apenas o dono do post pode editar ou apagar
+      allow update, delete: if request.auth != null && request.auth.uid == resource.data.userId;
+    }
+  }
+}
